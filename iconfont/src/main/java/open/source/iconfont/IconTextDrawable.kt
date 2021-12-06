@@ -37,16 +37,11 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
 
         private const val CODE_CACHE_SIZE = 128
 
-        private val localContext = ThreadLocal<Context>()
-
         private val codes = object : LruCache<String, String>(CODE_CACHE_SIZE) {
             override fun create(key: String): String {
                 return key.toInt(16).toChar().toString()
             }
         }
-
-        private val inflateContext: Context
-            get() = localContext.get() ?: AppCompatUtils.application
 
         @JvmStatic
         fun create(
@@ -82,16 +77,6 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
             theme: Theme?
         ): IconTextDrawable {
             return IconTextDrawable().apply { inflate(context, parser, attrs, theme) }
-        }
-
-        @JvmStatic
-        fun withContext(context: Context, action: Runnable) {
-            try {
-                localContext.set(context)
-                action.run()
-            } finally {
-                localContext.set(null)
-            }
         }
 
         /**
@@ -323,7 +308,7 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
         parser: XmlPullParser,
         attrs: AttributeSet
     ) {
-        inflate(inflateContext, parser, attrs, null)
+        inflate(r, parser, attrs, null)
     }
 
     override fun inflate(
@@ -332,7 +317,7 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
         attrs: AttributeSet,
         theme: Theme?
     ) {
-        inflate(inflateContext, parser, attrs, theme)
+        inflate(InflateContext.obtain(r), parser, attrs, theme)
     }
 
     fun inflate(
@@ -343,6 +328,7 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
     ) {
         val array = obtainAttributes(context.resources, theme, attrs, R.styleable.IconTextDrawable)
         try {
+            setVisible(array.getBoolean(R.styleable.IconTextDrawable_visible, true), false)
             val text = array.getString(R.styleable.IconTextDrawable_code)
             if (!text.isNullOrEmpty()) {
                 state.text = codes[text]
