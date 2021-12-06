@@ -3,8 +3,37 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "private": true,
+  "homepage": ".",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "fastboot": "concurrently \\\"npm run start\\\" \\\"npx wait-debugger.js && cd build && npm run fastboot\\\"",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "postinstall": "cd build && yarn install"
+  },
+  "files": [
+    "build/app/main.js",
+    "build",
+    "README.md"
+  ],
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "dependencies": {
     "gulp": "^4.0.2",
@@ -12,7 +41,21 @@
     "gulp-iconfont": "^11.0.0",
     "hasha": "^5.2.2",
     "minimist": "^1.2.5",
-    "xmldom": "^0.4.0"
+    "xmldom": "^0.4.0",
+    "@ant-design/icons": "^4.4.0",
+    "antd": "^4.11.2",
+    "echarts": "^5.0.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-highlight-words": "^0.17.0",
+    "react-markdown": "^5.0.3",
+    "toastr": "^2.1.4"
+  },
+  "devDependencies": {
+    "concurrently": "^5.3.0",
+    "electron": "^11.2.1",
+    "react-app-rewired": "^2.1.8",
+    "react-scripts": "4.0.1"
   },
   "keywords": [],
   "author": "",
