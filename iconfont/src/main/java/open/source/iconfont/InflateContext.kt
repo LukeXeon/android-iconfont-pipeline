@@ -4,18 +4,22 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.AssetManager
 import android.content.res.Resources
+import java.lang.ref.WeakReference
 import java.util.*
 
 internal class InflateContext(
     base: Context,
-    private val res: Resources
+    res: Resources
 ) : ContextWrapper(base) {
+
+    private val reference = WeakReference(res)
+
     override fun getResources(): Resources {
-        return res
+        return reference.get() ?: super.getResources()
     }
 
     override fun getAssets(): AssetManager {
-        return res.assets
+        return resources.assets
     }
 
     companion object {
