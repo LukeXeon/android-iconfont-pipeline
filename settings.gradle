@@ -1,0 +1,4 @@
+include ':iconfont-assets'
+include ':iconfont'
+include ':iconfont-app'
+rootProject.name = "OpenIconFont"

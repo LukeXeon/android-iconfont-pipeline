@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="IconTextDrawable">
+        <attr name="tint" format="color" />
+        <!-- When a tint color is set, specifies its Porter-Duff blending mode. The
+             default value is src_in, which treats the drawable as an alpha mask. -->
+        <attr name="tintMode" />
+        <!-- Specifies the alpha multiplier to apply to the base drawable. -->
+        <attr name="alpha" />
+        <!-- The reference to the font file to be used. This should be a file in the res/font folder
+             and should therefore have an R reference value. E.g. @font/myfont -->
+        <attr name="font" format="reference" />
+        <attr name="code" format="string" />
+        <!-- Solid color for the gradient shape. -->
+        <attr name="color" format="color" />
+        <!-- Horizontal offset of the text shadow. -->
+        <attr name="shadowDx" format="float" />
+        <!-- Vertical offset of the text shadow. -->
+        <attr name="shadowDy" format="float" />
+        <!-- Blur radius of the text shadow. -->
+        <attr name="shadowRadius" format="float" />
+        <!-- Place a blurred shadow of text underneath the text, drawn with the
+             specified color. The text shadow produced does not interact with
+             properties on View that are responsible for real time shadows,
+             {@link android.R.styleable#View_elevation elevation} and
+             {@link android.R.styleable#View_translationZ translationZ}. -->
+        <attr name="shadowColor" format="color" />
+        <attr name="intrinsicSize" format="dimension" />
+        <!-- Sets the padding, in pixels, of the left edge; see {@link android.R.attr#padding}. -->
+        <attr name="paddingLeft" format="dimension" />
+        <!-- Sets the padding, in pixels, of the top edge; see {@link android.R.attr#padding}. -->
+        <attr name="paddingTop" format="dimension" />
+        <!-- Sets the padding, in pixels, of the right edge; see {@link android.R.attr#padding}. -->
+        <attr name="paddingRight" format="dimension" />
+        <!-- Sets the padding, in pixels, of the bottom edge; see {@link android.R.attr#padding}. -->
+        <attr name="paddingBottom" format="dimension" />
+    </declare-styleable>
+    <!-- Used to describe the gradient used to fill the shape of a GradientDrawable. -->
+    <declare-styleable name="IconTextDrawable.Gradient">
+        <!-- Start color of the gradient. -->
+        <attr name="startColor" format="color" />
+        <!-- Optional center color. For linear gradients, use centerX or centerY to place the center
+             color. -->
+        <attr name="centerColor" format="color" />
+        <!-- End color of the gradient. -->
+        <attr name="endColor" format="color" />
+        <!-- Whether the drawable level value (see
+             {@link android.graphics.drawable.Drawable#getLevel()}) is used to scale the gradient.
+             Scaling behavior varies based on gradient type. For "linear", adjusts the ending
+             position along the gradient's axis of orientation. For "radial", adjusts the outer
+             radius. For "sweep", adjusts the ending angle. The default value is false. -->
+        <attr name="useLevel" format="boolean" />
+        <!-- Angle of the gradient, used only with linear gradient. Must be a multiple of 45 in the
+             range [0, 315]. -->
+        <attr name="angle" format="float" />
+        <!-- Type of gradient. The default type is linear. -->
+        <attr name="type">
+            <!-- Linear gradient extending across the center point. -->
+            <enum name="linear" value="0" />
+            <!-- Radial gradient extending from the center point outward. -->
+            <enum name="radial" value="1" />
+            <!-- Sweep (or angular) gradient sweeping counter-clockwise around the center point. -->
+            <enum name="sweep"  value="2" />
+        </attr>
+        <!-- X-position of the center point of the gradient within the shape as a fraction of the
+             width. The default value is 0.5. -->
+        <attr name="centerX" format="float|fraction" />
+        <!-- Y-position of the center point of the gradient within the shape as a fraction of the
+             height. The default value is 0.5. -->
+        <attr name="centerY" format="float|fraction" />
+        <!-- Radius of the gradient, used only with radial gradient. May be an explicit dimension
+             or a fractional value relative to the shape's minimum dimension. -->
+        <attr name="gradientRadius" format="float|fraction|dimension" />
+    </declare-styleable>
+</resources>

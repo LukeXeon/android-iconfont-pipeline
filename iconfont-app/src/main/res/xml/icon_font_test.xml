@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<icon-font xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:code="ea01"
+    app:color="@color/purple_200"
+    app:font="@font/iconfont">
+</icon-font>
