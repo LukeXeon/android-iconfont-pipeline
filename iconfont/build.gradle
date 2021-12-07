@@ -4,9 +4,6 @@ plugins {
     id 'maven-publish'
 }
 
-def NAME = 'iconfont'
-def VERSION = '1.0'
-
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -55,17 +52,7 @@ afterEvaluate {
 
                 // You can then customize attributes of the publication as shown below.
                 groupId = rootProject.ext.groupId
-                artifactId = NAME
-                version = VERSION
-            }
-            // Creates a Maven publication called “debug”.
-            debug(MavenPublication) {
-                // Applies the component for the debug build variant.
-                from components.debug
-
-                groupId = rootProject.ext.groupId
-                artifactId = NAME + '-debug'
-                version = VERSION
+                artifactId = 'iconfont'
             }
         }
     }
