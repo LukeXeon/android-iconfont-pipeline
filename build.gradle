@@ -14,7 +14,7 @@ buildscript {
         // in the individual module build.gradle files
     }
     ext {
-        groupId = 'open.source.iconfont'
+        groupId = 'com.github.LukeXeon'
     }
 }
 
