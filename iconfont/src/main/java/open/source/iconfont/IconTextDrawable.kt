@@ -793,10 +793,14 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
             return field
         }
         set(@Px value) {
-            field = 0f
-            state.gradientRadius = value
-            gradientIsDirty = true
-            invalidateSelf()
+            if (Throwable().stackTrace.first().className != IconTextDrawable::class.java.name) {
+                field = 0f
+                state.gradientRadius = value
+                gradientIsDirty = true
+                invalidateSelf()
+            } else {
+                field = value
+            }
         }
 
     var gradientType: Int
