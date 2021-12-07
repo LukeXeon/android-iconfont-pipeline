@@ -225,6 +225,15 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
             shadowRadius = other.shadowRadius
             paint.set(other.paint)
             padding.set(other.padding)
+            centerX = other.centerX
+            centerY = other.centerY
+            useLevel = other.useLevel
+            angle = other.angle
+            orientation = other.orientation
+            gradientColors = other.gradientColors
+            positions = other.positions
+            gradientType = other.gradientType
+            gradientRadius = other.gradientRadius
         }
 
         override fun newDrawable(): Drawable {
