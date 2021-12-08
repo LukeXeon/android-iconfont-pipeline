@@ -26,5 +26,8 @@ afterEvaluate {
                 artifactId = 'iconfont-assets'
             }
         }
+        repositories {
+            mavenLocal()
+        }
     }
 }

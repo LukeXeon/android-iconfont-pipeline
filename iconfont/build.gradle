@@ -58,5 +58,8 @@ afterEvaluate {
                 artifactId = 'iconfont'
             }
         }
+        repositories {
+            mavenLocal()
+        }
     }
 }
