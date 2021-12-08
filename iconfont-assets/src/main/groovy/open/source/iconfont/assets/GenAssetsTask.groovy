@@ -142,7 +142,7 @@ class GenAssetsTask extends DefaultTask {
         })
         def fontFile = getTypefaceFile()
         if (fontFile.exists()) {
-            fontFile.delete()
+            fontFile.getParentFile().deleteDir()
         } else {
             fontFile.getParentFile().mkdir()
         }
