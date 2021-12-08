@@ -5,13 +5,18 @@ buildscript {
         google()
         mavenCentral()
         jcenter()
+        maven { url "https://jitpack.io" }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.1.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+        classpath 'com.github.LukeXeon.android-iconfont-pipeline:iconfont-assets:ab8517244c'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+    }
+    ext {
+        groupId = 'com.github.LukeXeon'
     }
 }
 
@@ -20,9 +25,12 @@ allprojects {
         google()
         mavenCentral()
         jcenter()
+        maven { url "https://jitpack.io" }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+

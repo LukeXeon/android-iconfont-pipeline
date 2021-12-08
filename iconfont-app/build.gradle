@@ -1,6 +1,10 @@
-plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'open.source.iconfont.assets'
+
+iconfont {
+    host = 'https://icon-font-assets.oss-cn-beijing.aliyuncs.com'
+    version = '0.0.1'
 }
 
 android {

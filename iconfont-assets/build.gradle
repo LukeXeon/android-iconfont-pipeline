@@ -1,8 +1,9 @@
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'groovy'
 apply plugin: 'maven'
-version = '1.0.0'
-group = 'open.source.iconfont'
+apply plugin: 'maven-publish'
+
+group = rootProject.ext.groupId
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_7
@@ -13,4 +14,20 @@ dependencies {
     implementation gradleApi()
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                from components.java
+                groupId = rootProject.ext.groupId
+                artifactId = 'iconfont-assets'
+            }
+        }
+        repositories {
+            mavenLocal()
+        }
+    }
 }

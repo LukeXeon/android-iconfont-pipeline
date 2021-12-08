@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="IconTextDrawable">
+        <attr name="visible" format="boolean"/>
         <attr name="tint" format="color" />
         <!-- When a tint color is set, specifies its Porter-Duff blending mode. The
              default value is src_in, which treats the drawable as an alpha mask. -->

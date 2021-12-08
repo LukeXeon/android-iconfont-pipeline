@@ -12,12 +12,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 import java.nio.file.Paths
 import java.util.concurrent.Callable
+import java.util.function.Function
 
 class GenAssetsTask extends DefaultTask {
 
     private final Gson gson
-
-    private static final int RETRY_TIME = 10
 
     GenAssetsTask() {
         gson = new Gson()
@@ -62,21 +61,15 @@ class GenAssetsTask extends DefaultTask {
         ))
     }
 
-    private <T> T fetch(Callable<T> callable) {
-        int count = 0
-        def result
-        while (true) {
-            if (++count > RETRY_TIME) {
-                throw new IllegalStateException(project.extensions.iconfont.host + "出问题了，或者version不对")
+    private static <T> T fetch(Callable<T> callable, Function<Throwable, Throwable> factory) {
+        def result = null
+        try {
+            result = callable.call()
+            if (result == null) {
+                throw new NullPointerException()
             }
-            try {
-                result = callable.call()
-            } catch (Throwable ignored) {
-                continue
-            }
-            if (result != null) {
-                break
-            }
+        } catch (Throwable e) {
+            throw factory.apply(e)
         }
         return result
     }
@@ -121,6 +114,11 @@ class GenAssetsTask extends DefaultTask {
                 }
                 return null
             }
+        }, new Function<Throwable, Throwable>() {
+            @Override
+            Throwable apply(Throwable throwable) {
+                return new IllegalStateException(host + "出问题了", throwable)
+            }
         })
         def body = tuple.first
         def fontUrl = tuple.second
@@ -136,6 +134,11 @@ class GenAssetsTask extends DefaultTask {
                 }
                 return null
             }
+        }, new Function<Throwable, Throwable>() {
+            @Override
+            Throwable apply(Throwable throwable) {
+                return new IllegalStateException("拉取字体文件失败", throwable)
+            }
         })
         def fontFile = getTypefaceFile()
         if (fontFile.exists()) {
@@ -148,12 +151,11 @@ class GenAssetsTask extends DefaultTask {
         def xmlDir = getXmlDir()
         if (xmlDir.exists()) {
             xmlDir.deleteDir()
-        } else {
-            xmlDir.mkdir()
         }
+        xmlDir.mkdir()
         def fontName = getFontName()
         for (def item : body.icons) {
-            def name = toName(item.key)
+            def name = "ref_" + toName(item.key)
             def file = new File(xmlDir, name + ".xml")
             file.createNewFile()
             def writer = file.newWriter()
@@ -173,6 +175,8 @@ class GenAssetsTask extends DefaultTask {
             def b = (byte) c
             if ((b >= 97 && b <= 122) || (b >= 65 && b <= 90)) {
                 builder.append(c.toLowerCase())
+            } else if (c.isDigit()) {
+                builder.append(c)
             } else if (i != 0 && i != source.length() - 1) {
                 builder.append('_')
             }

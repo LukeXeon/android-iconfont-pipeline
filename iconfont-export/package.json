@@ -1,20 +1,20 @@
 {
-  "name": "iconfont-export",
+  "name": "svg2iconfont",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
-    "gulp": "^4.0.2",
-    "gulp-filter": "^6.0.0",
-    "gulp-iconfont": "^11.0.0",
-    "hasha": "^5.2.2",
-    "minimist": "^1.2.5",
-    "xmldom": "^0.4.0"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "iconfont": "gulp default"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "del": "^6.0.0",
+    "gulp": "^4.0.2",
+    "gulp-filter": "^6.0.0",
+    "gulp-iconfont": "^11.0.0",
+    "minimist": "^1.2.5"
+  }
 }
