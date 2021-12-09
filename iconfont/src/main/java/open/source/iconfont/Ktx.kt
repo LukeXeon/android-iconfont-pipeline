@@ -42,7 +42,7 @@ internal val AssetManager.assetTypeface: Typeface?
         }
     }
 
-internal val AssetManager.assetMetadata: Map<String, Char>
+private val AssetManager.assetMetadata: Map<String, Char>
     get() {
         return synchronized(assetMetadataLock) {
             var metadata = assetMetadataLock[0]
@@ -64,6 +64,9 @@ internal val AssetManager.assetMetadata: Map<String, Char>
             return@synchronized metadata
         } ?: Collections.emptyMap()
     }
+
+val AssetManager.assetIconNames: Set<String>
+    get() = assetMetadata.keys
 
 fun Context.getAssetIconDrawable(name: String): IconTextDrawable? {
     val c = assets.assetMetadata[name]
