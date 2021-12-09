@@ -52,7 +52,7 @@ private val AssetManager.assetMetadata: Map<String, Char>
                         it.reader().readText()
                     }
                     val json = JSONObject(text)
-                    json.getJSONObject(IconFontMetadata::icons.name)
+                    json.getJSONObject("icons")
                         .keys()
                         .asSequence()
                         .map {
