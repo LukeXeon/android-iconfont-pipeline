@@ -9,13 +9,11 @@ import java.util.*
 
 internal class InflateContext(
     base: Context,
-    res: Resources
+    private val res: Resources
 ) : ContextWrapper(base) {
 
-    private val reference = WeakReference(res)
-
     override fun getResources(): Resources {
-        return reference.get() ?: super.getResources()
+        return res
     }
 
     override fun getAssets(): AssetManager {
@@ -23,13 +21,28 @@ internal class InflateContext(
     }
 
     companion object {
-        private val caches = WeakHashMap<Resources, InflateContext>()
+        private val caches = LinkedList<WeakReference<InflateContext>>()
 
         fun obtain(r: Resources): Context {
             synchronized(caches) {
-                return caches.getOrPut(r) {
-                    InflateContext(AppCompatUtils.application, r)
+                val it = caches.iterator()
+                var context: InflateContext? = null
+                loop@ while (it.hasNext()) {
+                    context = it.next().get()
+                    when {
+                        context == null -> {
+                            it.remove()
+                        }
+                        context.res == r -> {
+                            break@loop
+                        }
+                    }
                 }
+                if (context == null) {
+                    context = InflateContext(AppCompatUtils.application, r)
+                    caches.add(WeakReference(context))
+                }
+                return context
             }
         }
     }

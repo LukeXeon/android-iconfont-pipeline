@@ -21,3 +21,4 @@
 #-renamesourcefileattribute SourceFile
 
 -keep androidx.appcompat.widget.ResourceManagerInternal
+-keep open.source.iconfont.IconFontMetadata

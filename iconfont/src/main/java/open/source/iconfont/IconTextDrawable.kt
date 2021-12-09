@@ -359,7 +359,7 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
                         AppCompatUtils.mainThread
                     )
                 } else {
-                    state.paint.typeface = null
+                    state.paint.typeface = context.assets.assetTypeface
                 }
             }
             state.paint.color = array.getColor(
