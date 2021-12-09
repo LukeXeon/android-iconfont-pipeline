@@ -27,10 +27,10 @@ object DebugDraw {
         get() = preferences.getBoolean(DEBUG_DRAW_KEY, false)
         set(value) {
             preferences.edit().putBoolean(DEBUG_DRAW_KEY, value).apply()
-            AppCompatUtils.runOnMainThread(invalidateRunnable)
+            IconFont.runOnMainThread(invalidateRunnable)
         }
     private val preferences: SharedPreferences by lazy {
-        AppCompatUtils.application.getSharedPreferences(
+        IconFont.application.getSharedPreferences(
             DEBUG_PREFERENCES,
             Context.MODE_PRIVATE
         )
@@ -46,9 +46,9 @@ object DebugDraw {
     private lateinit var mountBoundsCornerPaint: Paint
 
     internal fun draw(host: Drawable, canvas: Canvas) {
-        if (AppCompatUtils.isDebuggable && AppCompatUtils.isMainThread) {
+        if (IconFont.isDebuggable && IconFont.isMainThread) {
             drawableRefs.add(host)
-            if (isAlwaysShowLayoutBounds || AppCompatUtils.isShowingLayoutBounds) {
+            if (isAlwaysShowLayoutBounds || IconFont.isShowingLayoutBounds) {
                 highlightMountBounds(host, canvas)
             }
         }

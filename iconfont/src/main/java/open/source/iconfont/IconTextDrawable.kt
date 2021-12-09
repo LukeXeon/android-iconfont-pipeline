@@ -285,7 +285,7 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
         val bounds = bounds
         val height = bounds.height()
         val text = state.text
-        if (height > 0 && !text.isNullOrEmpty() && ensureValidRect()) {
+        if (height > 0 && state.paint.typeface != null && !text.isNullOrEmpty() && ensureValidRect()) {
             state.paint.shader = gradientShader
             val colorFilter = state.paint.colorFilter
             if (colorFilter == null) {
@@ -356,10 +356,10 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
                         context,
                         fontId,
                         callback,
-                        AppCompatUtils.mainThread
+                        IconFont.mainThread
                     )
                 } else {
-                    state.paint.typeface = context.assets.assetTypeface
+                    state.paint.typeface = null
                 }
             }
             state.paint.color = array.getColor(

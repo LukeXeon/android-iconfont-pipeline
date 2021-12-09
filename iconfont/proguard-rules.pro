@@ -20,5 +20,5 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep androidx.appcompat.widget.ResourceManagerInternal
--keep open.source.iconfont.IconFontMetadata
+-keep class androidx.appcompat.widget.ResourceManagerInternal{*;}
+-keep class androidx.appcompat.widget.ResourceManagerInternal$InflateDelegate{*;}

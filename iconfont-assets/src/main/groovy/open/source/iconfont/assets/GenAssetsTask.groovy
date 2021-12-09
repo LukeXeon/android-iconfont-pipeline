@@ -20,6 +20,9 @@ class GenAssetsTask extends DefaultTask {
 
     GenAssetsTask() {
         gson = new Gson()
+        outputs.upToDateWhen {
+            return false
+        }
     }
 
     private File getXmlDir() {
@@ -50,7 +53,6 @@ class GenAssetsTask extends DefaultTask {
 
     @OutputFile
     File getTypefaceFile() {
-
         return project.file(Paths.get(
                 "build",
                 "generated",
@@ -144,7 +146,7 @@ class GenAssetsTask extends DefaultTask {
         if (fontFile.exists()) {
             fontFile.getParentFile().deleteDir()
         } else {
-            fontFile.getParentFile().mkdir()
+            fontFile.getParentFile().mkdirs()
         }
         fontFile.createNewFile()
         fontFile.setBytes(fontBytes)
@@ -152,7 +154,7 @@ class GenAssetsTask extends DefaultTask {
         if (xmlDir.exists()) {
             xmlDir.deleteDir()
         }
-        xmlDir.mkdir()
+        xmlDir.mkdirs()
         def fontName = getFontName()
         for (def item : body.icons) {
             def name = "ref_" + toName(item.key)

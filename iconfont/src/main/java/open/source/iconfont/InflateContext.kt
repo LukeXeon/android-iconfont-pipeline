@@ -39,7 +39,7 @@ internal class InflateContext(
                     }
                 }
                 if (context == null) {
-                    context = InflateContext(AppCompatUtils.application, r)
+                    context = InflateContext(IconFont.application, r)
                     caches.add(WeakReference(context))
                 }
                 return context
