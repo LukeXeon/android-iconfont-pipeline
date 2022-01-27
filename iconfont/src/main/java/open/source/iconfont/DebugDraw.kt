@@ -1,13 +1,12 @@
 package open.source.iconfont
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.SharedPreferences
-import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.util.DisplayMetrics
+import java.io.File
 import java.util.*
 import kotlin.math.min
 
@@ -17,57 +16,60 @@ import kotlin.math.min
 @SuppressLint("MemberVisibilityCanBePrivate")
 object DebugDraw {
 
-    private const val DEBUG_DRAW_KEY = "debug_draw"
-    private const val DEBUG_PREFERENCES = "icon_font_debug_settings"
     private const val BORDER_COLOR = -0x66010000
     private const val CORNER_COLOR = -0xffff01
 
-    @JvmStatic
-    var isAlwaysShowLayoutBounds: Boolean
-        get() = preferences.getBoolean(DEBUG_DRAW_KEY, false)
-        set(value) {
-            preferences.edit().putBoolean(DEBUG_DRAW_KEY, value).apply()
-            IconFont.runOnMainThread(invalidateRunnable)
-        }
-    private val preferences: SharedPreferences by lazy {
-        IconFont.application.getSharedPreferences(
-            DEBUG_PREFERENCES,
-            Context.MODE_PRIVATE
-        )
+    private val drawables by lazy {
+        Collections.newSetFromMap(WeakHashMap<Drawable, Boolean>())
     }
-    private val invalidateRunnable = Runnable {
-        for (drawable in drawableRefs) {
-            drawable.invalidateSelf()
-        }
+    private val checker by lazy {
+        File(ApplicationUtils.application.cacheDir, "icon_font_enable_debug_draw")
     }
-    private val drawableRefs: MutableSet<Drawable> = Collections.newSetFromMap(WeakHashMap())
     private lateinit var mountBoundsRect: Rect
     private lateinit var mountBoundsBorderPaint: Paint
     private lateinit var mountBoundsCornerPaint: Paint
 
+    @JvmStatic
+    var isAlwaysShowLayoutBounds: Boolean
+        get() = checker.exists()
+        set(value) {
+            if (value) {
+                checker.createNewFile()
+            } else {
+                checker.delete()
+            }
+            MainThread.post(invalidateRunnable)
+        }
+
+    private val invalidateRunnable = Runnable {
+        for (drawable in drawables) {
+            drawable.invalidateSelf()
+        }
+    }
+
     internal fun draw(host: Drawable, canvas: Canvas) {
-        if (IconFont.isDebuggable && IconFont.isMainThread) {
-            drawableRefs.add(host)
-            if (isAlwaysShowLayoutBounds || IconFont.isShowingLayoutBounds) {
+        if (ApplicationUtils.isDebuggable && MainThread.isMainThread) {
+            drawables.add(host)
+            if (isAlwaysShowLayoutBounds || ViewCompat.isShowingLayoutBounds) {
                 highlightMountBounds(host, canvas)
             }
         }
     }
 
     private fun highlightMountBounds(host: Drawable, canvas: Canvas) {
-        val resources = Resources.getSystem()
+        val dm = ApplicationUtils.application.resources.displayMetrics
         if (!::mountBoundsRect.isInitialized) {
             mountBoundsRect = Rect()
         }
         if (!::mountBoundsBorderPaint.isInitialized) {
             mountBoundsBorderPaint = Paint()
             mountBoundsBorderPaint.style = Paint.Style.STROKE
-            mountBoundsBorderPaint.strokeWidth = dipToPixels(resources, 1).toFloat()
+            mountBoundsBorderPaint.strokeWidth = dipToPixels(dm, 1).toFloat()
         }
         if (!::mountBoundsCornerPaint.isInitialized) {
             mountBoundsCornerPaint = Paint()
             mountBoundsCornerPaint.style = Paint.Style.FILL
-            mountBoundsCornerPaint.strokeWidth = dipToPixels(resources, 2).toFloat()
+            mountBoundsCornerPaint.strokeWidth = dipToPixels(dm, 2).toFloat()
         }
         mountBoundsRect.set(host.bounds)
         mountBoundsBorderPaint.color = BORDER_COLOR
@@ -80,7 +82,7 @@ object DebugDraw {
             mountBoundsCornerPaint.strokeWidth.toInt(),
             min(
                 min(mountBoundsRect.width(), mountBoundsRect.height()) / 3,
-                dipToPixels(resources, 12)
+                dipToPixels(dm, 12)
             )
         )
     }
@@ -129,8 +131,8 @@ object DebugDraw {
         )
     }
 
-    private fun dipToPixels(res: Resources, dips: Int): Int {
-        val scale = res.displayMetrics.density
+    private fun dipToPixels(dm: DisplayMetrics, dips: Int): Int {
+        val scale = dm.density
         return (dips * scale + 0.5f).toInt()
     }
 

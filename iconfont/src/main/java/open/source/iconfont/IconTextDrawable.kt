@@ -356,7 +356,7 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
                         context,
                         fontId,
                         callback,
-                        IconFont.mainThread
+                        MainThread.handler
                     )
                 } else {
                     state.paint.typeface = null
