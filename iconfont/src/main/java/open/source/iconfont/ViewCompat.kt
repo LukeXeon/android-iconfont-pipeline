@@ -1,12 +1,13 @@
 package open.source.iconfont
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.Application
 import android.os.Build
-import android.os.Bundle
 import android.view.inspector.WindowInspector
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import java.lang.reflect.Method
 
 object ViewCompat {
@@ -27,66 +28,35 @@ object ViewCompat {
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    private object ViewCompatImplApiR : ViewCompatImpl {
-        private val stateLock = arrayOfNulls<Boolean>(1)
+    private object ViewCompatImplApiR : ViewCompatImpl, LifecycleEventObserver {
+        private val stateLock = arrayOf(false)
+
+        init {
+            ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+        }
 
         override val isShowingLayoutBounds: Boolean
             get() {
                 synchronized(stateLock) {
-                    var value = stateLock[0]
-                    if (value == null) {
-                        val views = WindowInspector.getGlobalWindowViews()
-                        if (views.isEmpty()) {
-                            return false
-                        } else {
-                            ApplicationUtils.application.registerActivityLifecycleCallbacks(object :
-                                Application.ActivityLifecycleCallbacks {
-                                override fun onActivityCreated(
-                                    activity: Activity,
-                                    savedInstanceState: Bundle?
-                                ) {
+                    return stateLock[0]
+                }
+            }
 
-                                }
-
-                                override fun onActivityStarted(activity: Activity) {
-
-                                }
-
-                                override fun onActivityResumed(activity: Activity) {
-                                    synchronized(stateLock) {
-                                        stateLock[0] = WindowInspector.getGlobalWindowViews()
-                                            .any { it.isShowingLayoutBounds }
-                                    }
-                                }
-
-                                override fun onActivityPaused(activity: Activity) {
-
-                                }
-
-                                override fun onActivityStopped(activity: Activity) {
-
-                                }
-
-                                override fun onActivitySaveInstanceState(
-                                    activity: Activity,
-                                    outState: Bundle
-                                ) {
-
-                                }
-
-                                override fun onActivityDestroyed(activity: Activity) {
-
-                                }
-                            })
-                            value = views.any { it.isShowingLayoutBounds }
-                            stateLock[0] = value
-                            return value
-                        }
-                    } else {
-                        return value
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            if (event == Lifecycle.Event.ON_RESUME) {
+                val views = WindowInspector.getGlobalWindowViews()
+                if (views.isNotEmpty()) {
+                    synchronized(stateLock) {
+                        stateLock[0] = WindowInspector.getGlobalWindowViews()
+                            .any { it.isShowingLayoutBounds }
+                    }
+                } else {
+                    synchronized(stateLock) {
+                        stateLock[0] = false
                     }
                 }
             }
+        }
     }
 
     @SuppressLint("PrivateApi")
