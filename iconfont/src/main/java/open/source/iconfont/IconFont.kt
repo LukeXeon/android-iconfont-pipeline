@@ -21,7 +21,7 @@ object IconFont {
 
     @JvmStatic
     fun install(c: Context) {
-        if (!ApplicationUtils.install(c)) {
+        if (!ApplicationUtils.checkInitialize(c)) {
             return
         }
         val result = runCatching {
@@ -75,8 +75,12 @@ object IconFont {
             }
         }
         if (!result.isSuccess && ApplicationUtils.isDebuggable) {
-            throw AssertionError("️警告，${RESOURCE_MANAGER_INTERNAL_CLASS}已经发生break change，需要修改IconFont SDK代码做进一步适配，此异常只在Debug包抛出")
-                .apply { initCause(result.exceptionOrNull()) }
+            throw AssertionError(
+                c.getString(
+                    R.string.icon_font_appcompat_break_change_warning,
+                    RESOURCE_MANAGER_INTERNAL_CLASS
+                )
+            ).apply { initCause(result.exceptionOrNull()) }
         }
     }
 }

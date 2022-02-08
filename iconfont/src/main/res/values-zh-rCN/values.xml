@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="icon_font_appcompat_break_change_warning">️警告，%s已经发生break change，需要修改IconFont SDK代码做进一步适配，此异常只在Debug包抛出</string>
+</resources>

@@ -36,7 +36,7 @@ object ApplicationUtils {
 
     val isDebuggable: Boolean by lazy { application.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0 }
 
-    internal fun install(c: Context): Boolean {
+    internal fun checkInitialize(c: Context): Boolean {
         synchronized(applicationLock) {
             return if (applicationLock[0] == null) {
                 application = c.applicationContext as Application

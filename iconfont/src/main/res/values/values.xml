@@ -73,4 +73,6 @@
              or a fractional value relative to the shape's minimum dimension. -->
         <attr name="gradientRadius" format="float|fraction|dimension" />
     </declare-styleable>
+
+    <string name="icon_font_appcompat_break_change_warning">Warning, %s has broken change. You need to modify the iconfont SDK code for further adaptation. This exception is only thrown in the debug package</string>
 </resources>
