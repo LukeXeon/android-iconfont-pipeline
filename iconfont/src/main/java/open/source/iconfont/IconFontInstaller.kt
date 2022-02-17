@@ -4,9 +4,7 @@ import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
-import androidx.annotation.RestrictTo
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class IconFontInstaller : ContentProvider() {
 
     override fun onCreate(): Boolean {

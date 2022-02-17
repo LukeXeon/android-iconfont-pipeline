@@ -15,13 +15,14 @@ import android.util.Log
 import android.util.TypedValue
 import android.util.Xml
 import androidx.annotation.*
-import androidx.collection.LruCache
+import androidx.collection.SparseArrayCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.TintAwareDrawable
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.lang.ref.WeakReference
+import java.util.*
 import kotlin.math.min
 
 @SuppressLint("RestrictedApi", "MemberVisibilityCanBePrivate")
@@ -35,12 +36,10 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
 
         private const val GRADIENT_TAG = "gradient"
 
-        private const val CODE_CACHE_SIZE = 128
+        private val codes = SparseArrayCompat<String>()
 
-        private val codes = object : LruCache<String, String>(CODE_CACHE_SIZE) {
-            override fun create(key: String): String {
-                return key.toInt(16).toChar().toString()
-            }
+        private val extensions by lazy {
+            ServiceLoader.load(DrawableExtension::class.java).toList()
         }
 
         @JvmStatic
@@ -247,7 +246,11 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
     private class UpdateCallback(drawable: IconTextDrawable) : ResourcesCompat.FontCallback() {
 
         @Volatile
-        var drawable: WeakReference<IconTextDrawable>? = WeakReference(drawable)
+        private var drawable: WeakReference<IconTextDrawable>? = WeakReference(drawable)
+
+        fun reset() {
+            drawable = null
+        }
 
         private fun applyTypeface(typeface: Typeface?) {
             val drawable = drawable?.get() ?: return
@@ -300,7 +303,9 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
             state.paint.colorFilter = colorFilter
             state.paint.shader = null
         }
-        DebugDraw.draw(this, canvas)
+        extensions.forEach {
+            it.draw(this, canvas)
+        }
     }
 
     override fun setAlpha(alpha: Int) {
@@ -340,7 +345,13 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
             setVisible(array.getBoolean(R.styleable.IconTextDrawable_visible, true), false)
             val text = array.getString(R.styleable.IconTextDrawable_code)
             if (!text.isNullOrEmpty()) {
-                state.text = codes[text]
+                val key = text.toInt(16)
+                var code = codes[key]
+                if (code.isNullOrEmpty()) {
+                    code = key.toChar().toString()
+                    codes.put(key, code)
+                }
+                state.text = code
             } else {
                 throw XmlPullParserException("<icon-font> tag requires code not null")
             }
@@ -348,7 +359,7 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
             synchronized(updateLock) {
                 var callback = updateLock[0]
                 updateLock[0] = null
-                callback?.drawable = null
+                callback?.reset()
                 if (fontId != 0 && context.resources.getResourceTypeName(fontId) == FONT_RES_TYPE) {
                     callback = UpdateCallback(this)
                     updateLock[0] = callback
@@ -738,7 +749,7 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
         get() = state.paint.typeface
         set(value) {
             synchronized(updateLock) {
-                updateLock[0]?.drawable = null
+                updateLock[0]?.reset()
                 updateLock[0] = null
                 state.paint.typeface = value
             }

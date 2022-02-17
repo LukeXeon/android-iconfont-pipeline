@@ -39,7 +39,7 @@ internal class InflateContext(
                     }
                 }
                 if (context == null) {
-                    context = InflateContext(ApplicationUtils.application, r)
+                    context = InflateContext(ApplicationContext.current, r)
                     caches.add(WeakReference(context))
                 }
                 return context

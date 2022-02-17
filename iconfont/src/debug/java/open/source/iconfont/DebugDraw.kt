@@ -14,50 +14,51 @@ import kotlin.math.min
  * 用于绘制IconFont的边界，这个类应该保证只在Debug包才工作
  */
 @SuppressLint("MemberVisibilityCanBePrivate")
-object DebugDraw {
+class DebugDraw : DrawableExtension {
 
-    private const val BORDER_COLOR = -0x66010000
-    private const val CORNER_COLOR = -0xffff01
+    companion object {
+        private const val BORDER_COLOR = -0x66010000
+        private const val CORNER_COLOR = -0xffff01
+        private val checker by lazy {
+            File(ApplicationContext.current.cacheDir, DebugDraw::class.java.name)
+        }
+        private val drawables by lazy {
+            Collections.newSetFromMap(WeakHashMap<Drawable, Boolean>())
+        }
+        private val invalidateRunnable = Runnable {
+            for (drawable in drawables) {
+                drawable.invalidateSelf()
+            }
+        }
 
-    private val drawables by lazy {
-        Collections.newSetFromMap(WeakHashMap<Drawable, Boolean>())
+        @JvmStatic
+        var isAlwaysShowLayoutBounds: Boolean
+            get() = checker.exists()
+            set(value) {
+                if (value) {
+                    checker.createNewFile()
+                } else {
+                    checker.delete()
+                }
+                MainThread.post(invalidateRunnable)
+            }
     }
-    private val checker by lazy {
-        File(ApplicationUtils.application.cacheDir, "icon_font_enable_debug_draw")
-    }
+
     private lateinit var mountBoundsRect: Rect
     private lateinit var mountBoundsBorderPaint: Paint
     private lateinit var mountBoundsCornerPaint: Paint
 
-    @JvmStatic
-    var isAlwaysShowLayoutBounds: Boolean
-        get() = checker.exists()
-        set(value) {
-            if (value) {
-                checker.createNewFile()
-            } else {
-                checker.delete()
-            }
-            MainThread.post(invalidateRunnable)
-        }
-
-    private val invalidateRunnable = Runnable {
-        for (drawable in drawables) {
-            drawable.invalidateSelf()
-        }
-    }
-
-    internal fun draw(host: Drawable, canvas: Canvas) {
-        if (ApplicationUtils.isDebuggable && MainThread.isMainThread) {
-            drawables.add(host)
+    override fun draw(drawable: Drawable, canvas: Canvas) {
+        if (ApplicationContext.isDebuggable && MainThread.isMainThread) {
+            drawables.add(drawable)
             if (isAlwaysShowLayoutBounds || ViewCompat.isShowingLayoutBounds) {
-                highlightMountBounds(host, canvas)
+                highlightMountBounds(drawable, canvas)
             }
         }
     }
 
     private fun highlightMountBounds(host: Drawable, canvas: Canvas) {
-        val dm = ApplicationUtils.application.resources.displayMetrics
+        val dm = ApplicationContext.current.resources.displayMetrics
         if (!::mountBoundsRect.isInitialized) {
             mountBoundsRect = Rect()
         }

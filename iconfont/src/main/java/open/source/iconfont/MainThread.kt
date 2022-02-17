@@ -3,7 +3,7 @@ package open.source.iconfont
 import android.os.Handler
 import android.os.Looper
 
-object MainThread {
+internal object MainThread {
     val isMainThread: Boolean
         get() = Looper.myLooper() == handler.looper
 

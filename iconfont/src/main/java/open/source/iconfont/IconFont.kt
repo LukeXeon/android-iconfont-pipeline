@@ -1,5 +1,6 @@
 package open.source.iconfont
 
+import android.app.Application
 import android.content.Context
 import android.content.res.Resources
 import android.util.AttributeSet
@@ -7,6 +8,7 @@ import org.xmlpull.v1.XmlPullParser
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
+import java.util.concurrent.atomic.AtomicBoolean
 
 object IconFont {
 
@@ -18,12 +20,14 @@ object IconFont {
     private const val ADD_DELEGATE_METHOD = "addDelegate"
     private const val CREATE_FROM_XML_INNER_METHOD = "createFromXmlInner"
     private const val ICON_FONT_TAG = "icon-font"
+    private val isInstalled = AtomicBoolean()
 
     @JvmStatic
     fun install(c: Context) {
-        if (!ApplicationUtils.checkInitialize(c)) {
+        if (!isInstalled.compareAndSet(false, true)) {
             return
         }
+        ApplicationContext.current = c.applicationContext as Application
         val result = runCatching {
             val clazz = Class.forName(RESOURCE_MANAGER_INTERNAL_CLASS)
             val getMethod = clazz.getDeclaredMethod(GET_METHOD)
@@ -74,7 +78,7 @@ object IconFont {
                 addDelegateMethod.invoke(instance, ICON_FONT_TAG, proxy)
             }
         }
-        if (!result.isSuccess && ApplicationUtils.isDebuggable) {
+        if (!result.isSuccess && ApplicationContext.isDebuggable) {
             throw AssertionError(
                 c.getString(
                     R.string.icon_font_appcompat_break_change_warning,

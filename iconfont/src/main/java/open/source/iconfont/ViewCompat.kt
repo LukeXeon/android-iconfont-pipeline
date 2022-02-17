@@ -10,7 +10,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import java.lang.reflect.Method
 
-object ViewCompat {
+internal object ViewCompat {
 
     private val impl by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
