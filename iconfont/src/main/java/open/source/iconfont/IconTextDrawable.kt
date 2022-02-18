@@ -39,7 +39,17 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
         private val codes = SparseArrayCompat<String>()
 
         private val extensions by lazy {
-            ServiceLoader.load(DrawableExtension::class.java).toList()
+            val list = LinkedList<DrawableExtension>()
+            val it = ServiceLoader.load(DrawableExtension::class.java).iterator()
+            while (it.hasNext()) {
+                try {
+                    list.add(it.next())
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                    break
+                }
+            }
+            return@lazy list
         }
 
         @JvmStatic
