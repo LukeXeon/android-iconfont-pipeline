@@ -248,7 +248,7 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
         @Volatile
         private var drawable: WeakReference<IconTextDrawable>? = WeakReference(drawable)
 
-        fun reset() {
+        fun clear() {
             drawable = null
         }
 
@@ -359,7 +359,7 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
             synchronized(updateLock) {
                 var callback = updateLock[0]
                 updateLock[0] = null
-                callback?.reset()
+                callback?.clear()
                 if (fontId != 0 && context.resources.getResourceTypeName(fontId) == FONT_RES_TYPE) {
                     callback = UpdateCallback(this)
                     updateLock[0] = callback
@@ -749,7 +749,7 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
         get() = state.paint.typeface
         set(value) {
             synchronized(updateLock) {
-                updateLock[0]?.reset()
+                updateLock[0]?.clear()
                 updateLock[0] = null
                 state.paint.typeface = value
             }
