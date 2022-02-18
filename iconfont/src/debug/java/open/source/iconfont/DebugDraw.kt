@@ -116,7 +116,15 @@ class DebugDraw : DrawableExtension {
     private fun drawMountBoundsCorners(
         canvas: Canvas, paint: Paint, bounds: Rect, cornerLength: Int, cornerWidth: Int
     ) {
-        drawCorner(canvas, paint, bounds.left, bounds.top, cornerLength, cornerLength, cornerWidth)
+        drawCorner(
+            canvas,
+            paint,
+            bounds.left,
+            bounds.top,
+            cornerLength,
+            cornerLength,
+            cornerWidth
+        )
         drawCorner(
             canvas,
             paint,

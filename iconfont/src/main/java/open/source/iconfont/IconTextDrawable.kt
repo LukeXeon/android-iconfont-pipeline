@@ -15,7 +15,6 @@ import android.util.Log
 import android.util.TypedValue
 import android.util.Xml
 import androidx.annotation.*
-import androidx.collection.SparseArrayCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.TintAwareDrawable
 import org.xmlpull.v1.XmlPullParser
@@ -36,20 +35,26 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
 
         private const val GRADIENT_TAG = "gradient"
 
-        private val codes = SparseArrayCompat<String>()
+        private val styleable = intArrayOf(
+            R.styleable.AppCompatTheme_colorPrimary,
+            *R.styleable.IconTextDrawable
+        )
 
         private val extensions by lazy {
-            val list = LinkedList<DrawableExtension>()
+            var list: LinkedList<DrawableExtension>? = null
             val it = ServiceLoader.load(DrawableExtension::class.java).iterator()
             while (it.hasNext()) {
                 try {
-                    list.add(it.next())
+                    if (list == null) {
+                        list = LinkedList<DrawableExtension>()
+                    }
+                    list?.add(it.next())
                 } catch (e: Throwable) {
                     e.printStackTrace()
                     break
                 }
             }
-            return@lazy list
+            return@lazy list ?: emptyList()
         }
 
         @JvmStatic
@@ -350,18 +355,12 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
         attrs: AttributeSet,
         theme: Resources.Theme?
     ) {
-        val array = obtainAttributes(context.resources, theme, attrs, R.styleable.IconTextDrawable)
+        val array = obtainAttributes(context.resources, theme, attrs, styleable)
         try {
             setVisible(array.getBoolean(R.styleable.IconTextDrawable_visible, true), false)
             val text = array.getString(R.styleable.IconTextDrawable_code)
             if (!text.isNullOrEmpty()) {
-                val key = text.toInt(16)
-                var code = codes[key]
-                if (code.isNullOrEmpty()) {
-                    code = key.toChar().toString()
-                    codes.put(key, code)
-                }
-                state.text = code
+                state.text = text.toInt(16).toChar().toString()
             } else {
                 throw XmlPullParserException("<icon-font> tag requires code not null")
             }
@@ -385,7 +384,7 @@ class IconTextDrawable : Drawable, TintAwareDrawable {
             }
             state.paint.color = array.getColor(
                 R.styleable.IconTextDrawable_color,
-                Color.WHITE
+                array.getColor(R.styleable.AppCompatTheme_colorPrimary, Color.WHITE)
             )
             val tintMode = array.getInt(R.styleable.IconTextDrawable_tintMode, -1)
             if (tintMode != -1) {
