@@ -9,7 +9,7 @@ internal object MainThread {
 
     val handler by lazy { Handler(Looper.getMainLooper()) }
 
-    fun post(runnable: Runnable) {
+    fun execute(runnable: Runnable) {
         if (isMainThread) {
             runnable.run()
         } else {

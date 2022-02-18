@@ -6,6 +6,10 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.util.DisplayMetrics
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import java.io.File
 import java.util.*
 import kotlin.math.min
@@ -16,7 +20,7 @@ import kotlin.math.min
 @SuppressLint("MemberVisibilityCanBePrivate")
 class DebugDraw : DrawableExtension {
 
-    companion object {
+    companion object : LifecycleEventObserver {
         private const val BORDER_COLOR = -0x66010000
         private const val CORNER_COLOR = -0xffff01
         private val checker by lazy {
@@ -40,8 +44,18 @@ class DebugDraw : DrawableExtension {
                 } else {
                     checker.delete()
                 }
-                MainThread.post(invalidateRunnable)
+                MainThread.execute(invalidateRunnable)
             }
+
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            if (event == Lifecycle.Event.ON_RESUME) {
+                invalidateRunnable.run()
+            }
+        }
+
+        init {
+            ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+        }
     }
 
     private lateinit var mountBoundsRect: Rect
