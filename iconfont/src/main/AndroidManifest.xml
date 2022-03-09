@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="open.source.iconfont">
 
     <application>
         <provider
-            android:name=".IconFontInstaller"
-            android:authorities="${applicationId}.icon-font.installer"
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
-            android:multiprocess="true" />
+            tools:node="merge" >
+            <meta-data
+                android:name="open.source.iconfont.IconFontInstaller"
+                android:value="androidx.startup" />
+        </provider>
     </application>
 </manifest>

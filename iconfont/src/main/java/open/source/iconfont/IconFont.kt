@@ -3,7 +3,11 @@ package open.source.iconfont
 import android.app.Application
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import androidx.annotation.DrawableRes
+import androidx.annotation.XmlRes
+import androidx.appcompat.content.res.AppCompatResources
 import org.xmlpull.v1.XmlPullParser
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
@@ -86,5 +90,10 @@ object IconFont {
                 )
             ).apply { initCause(result.exceptionOrNull()) }
         }
+    }
+
+    @JvmStatic
+    fun getDrawable(c: Context, @XmlRes @DrawableRes resId: Int): Drawable? {
+        return AppCompatResources.getDrawable(c, resId)
     }
 }

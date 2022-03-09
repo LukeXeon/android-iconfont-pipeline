@@ -20,7 +20,7 @@ import kotlin.math.min
 @SuppressLint("MemberVisibilityCanBePrivate")
 class DebugDraw : DrawableExtension {
 
-    companion object : LifecycleEventObserver {
+    companion object {
         private const val BORDER_COLOR = -0x66010000
         private const val CORNER_COLOR = -0xffff01
         private val checker by lazy {
@@ -47,14 +47,14 @@ class DebugDraw : DrawableExtension {
                 MainThread.execute(invalidateRunnable)
             }
 
-        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-            if (event == Lifecycle.Event.ON_RESUME) {
-                invalidateRunnable.run()
-            }
-        }
-
         init {
-            ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+            ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleEventObserver {
+                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                    if (event == Lifecycle.Event.ON_RESUME) {
+                        invalidateRunnable.run()
+                    }
+                }
+            })
         }
     }
 
